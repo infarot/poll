@@ -1,4 +1,4 @@
-module Api
+
   class SessionsController < DeviseTokenAuth::SessionsController
 
 
@@ -11,7 +11,6 @@ module Api
   def render_create_success
     render json: @token
 
-  end
   end
   end
 

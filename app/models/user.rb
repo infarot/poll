@@ -1,4 +1,5 @@
 class User < ActiveRecord::Base
+  has_many :questions
 
   # notice this comes BEFORE the include statement below
   # also notice that :confirmable is not included in this block
