@@ -1,5 +1,5 @@
 class ChoicesController < ApplicationController
-
+  before_action :authenticate_user!
 def index
   @choice = Choice.where(:question_id => params[:question_id])
 
