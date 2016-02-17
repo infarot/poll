@@ -5,8 +5,11 @@ Rails.application.routes.draw do
   }
   root to: "api#index"
 
-  namespace :api do
-      resources :users, :only => :create
+
+  resources :users, :only => :create
+  resources :questions do
+    resources :choices, :except => :create
+    post 'choices/:choice_id' => 'choices#create'
   end
 
 end

@@ -1,5 +1,4 @@
 class UsersController < ApplicationController
-  skip_before_action :verify_authenticity_token
   respond_to :json
 
   def index
@@ -10,9 +9,9 @@ class UsersController < ApplicationController
     @user = User.new(user_params)
 
     if @user.save
-      render json: "Added correctly"
+      render json: {:nothing => true, :status => 204, :content_type => 'application/json'}
     else
-      render json: "Error - check date/data type"
+      render json: "error"
     end
   end
 

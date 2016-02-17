@@ -1,4 +1,4 @@
 class Question < ActiveRecord::Base
   belongs_to :user
-  has_many :choices
+  has_many :choices, :dependent => :destroy
 end
