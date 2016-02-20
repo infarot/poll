@@ -1,19 +1,16 @@
 class ChoicesController < ApplicationController
   before_action :authenticate_user!
-def index
-  @choice = Choice.where(:question_id => params[:question_id])
+  before_action :get_choices
 
-  render json: @choices
+  def update
+    choice = @choices.find(params[:id]) #it will render 404 otherwise
+    choice.increment!(:votes, 1) #this cannot really fail
+    render json: {:nothing => true, :status => 201}
+  end
+  
+protected
 
-end
-
-  def create
-    #binding.pry
-    @choice = Choice.where(:id => params[:choice_id], :question_id => params[:question_id]).first
-    if @choice.present?
-      if @choice.increment!(:votes,1)
-        render json: @choice, :status => 201, :content_type => 'application/json'
-      end
-    end
-   end
+  def get_choices
+    @choices = Choice.where(question_id: params[:question_id])
+  end
 end

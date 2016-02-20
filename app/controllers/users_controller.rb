@@ -1,22 +1,13 @@
 class UsersController < ApplicationController
   respond_to :json
-
-  def index
-    @users = User.all
-    render json: @users
-  end
+  
   def create
-    @user = User.new(user_params)
-
+    @user = User.new(email: params[:email], password: params[:password], full_name: params[:full_name])
     if @user.save
       render json: {:nothing => true, :status => 204, :content_type => 'application/json'}
     else
-      render json: "error"
+      render json: "error".to_json
     end
-  end
-
-  def user_params
-    params.require(:user).permit(:email, :password, :full_name)
   end
 
 end

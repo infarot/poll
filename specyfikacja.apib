@@ -1,0 +1,241 @@
+FORMAT: 1A
+
+# Polls
+
+Polls is a simple API allowing consumers to view polls and vote in them.
+
+(large part of documentation is taken from https://github.com/apiaryio/api-blueprint/blob/master/examples/Polls%20API.md)
+
+# Polls API Root [/]
+
+This resource does not have any attributes. Instead it offers the initial API affordances in the form of the links in the JSON body.
+
+## Retrieve the Entry Point [GET]
+
++ Response 200 (application/json)
+
+        {
+            "questions_url": "/questions",
+            "users_url": "/users",
+            "sessions_url": "/sessions"
+        }
+
+## Users collection [/users]
+
+### Register new user [POST]
+
+You may register new user using this action.
+
++ email (string)
++ password (string)
++ full_name (string)
+
++ Request (application/json)
+
+        {
+             "email": "test@example.com",
+             "password": "aaaaaa1",
+             "full_name": "test user"
+        }
+
++ Response 204 (application/json)
+
+## Sessions collection [/sessions]
+
+### Create [POST]
+
+You can create new session (therefore logging in).
+
++ email (string)
++ password (string)
+
++ Request (application/json)
+
+            {
+                "login": "test@example.com",
+                "password": "aaaaaa1"
+            }
+
++ Response 201 (application/json)
+
+  + Body
+    
+            {
+        "token": "32HEXTOKEN"
+      }
+
+### Destroy [DELETE]
+
+You can log out.
+
++ token (string)
+
++ Request (application/json)
+
+            {
+                "token": "32HEXTOKEN"
+            }
+
++ Response 204 (application/json)
+
+## Group Question
+
+Resources related to questions in the API.
+
+## Question [/questions/{question_id}]
+
+A Question object has the following attributes:
+
++ question
++ published_at - An ISO8601 date when the question was published.
++ url
++ choices - An array of Choice objects.
++ creator_email - email of the creator of question
+
++ Parameters
+    + question_id: 1 (required, number) - ID of the Question in form of an integer
+
+### View a Questions Detail [GET]
+
++ Response 200 (application/json)
+
+        {
+            "question": "Favourite programming language?",
+            "published_at": "2014-11-11T08:40:51.620Z",
+            "url": "/questions/1",
+            "choices": [
+                {
+                    "choice": "Swift",
+                    "url": "/questions/1/choices/1",
+                    "votes": 2048
+                }, {
+                    "choice": "Python",
+                    "url": "/questions/1/choices/2",
+                    "votes": 1024
+                }, {
+                    "choice": "Objective-C",
+                    "url": "/questions/1/choices/3",
+                    "votes": 512
+                }, {
+                    "choice": "Ruby",
+                    "url": "/questions/1/choices/4",
+                    "votes": 256
+                }
+            ],
+            "creator_email": "test@example.com"
+        }
+
+## Choice [/questions/{question_id}/choices/{choice_id}]
+
++ Parameters
+    + question_id: 1 (required, number) - ID of the Question in form of an integer
+    + choice_id: 1 (required, number) - ID of the Choice in form of an integer
+    + token (required, string)
+
+### Vote on a Choice [PUT]
+
+This action allows you to vote on a question's choice.
+
++ Response 201
+
+    + Headers
+
+            Location: /questions/1
+
+## Questions Collection [/questions{?page}]
+
++ Parameters
+    + page: 1 (optional, number) - The page of questions to return
+
+### List All Questions [GET]
+
++ Response 200 (application/json)
+
+    + Headers
+
+            Link: </questions?page=2>; rel="next"
+
+    + Body
+
+            [
+                {
+                    "question": "Favourite programming language?",
+                    "published_at": "2014-11-11T08:40:51.620Z",
+                    "url": "/questions/1",
+                    "choices": [
+                        {
+                            "choice": "Swift",
+                            "url": "/questions/1/choices/1",
+                            "votes": 2048
+                        }, {
+                            "choice": "Python",
+                            "url": "/questions/1/choices/2",
+                            "votes": 1024
+                        }, {
+                            "choice": "Objective-C",
+                            "url": "/questions/1/choices/3",
+                            "votes": 512
+                        }, {
+                            "choice": "Ruby",
+                            "url": "/questions/1/choices/4",
+                            "votes": 256
+                        }
+                    ],
+                    creator_email: "test@example.com"
+                }
+            ]
+
+### Create a New Question [POST]
+
+You may create your own question using this action. It takes a JSON object containing a question and a collection of answers in the form of choices.
+
++ question (string) - The question
++ choices (array[string]) - A collection of choices.
++ token (required, string)
+
++ Request (application/json)
+
+        {
+            "question": "Favourite programming language?",
+            "choices": [
+                "Swift",
+                "Python",
+                "Objective-C",
+                "Ruby"
+            ],
+            "token": "32HEXSTRING"
+        }
+
++ Response 201 (application/json)
+
+    + Headers
+
+            Location: /questions/2
+
+    + Body
+
+            {
+                "question": "Favourite programming language?",
+                "published_at": "2014-11-11T08:40:51.620Z",
+                "url": "/questions/2",
+                "choices": [
+                    {
+                        "choice": "Swift",
+                        "url": "/questions/2/choices/1",
+                        "votes": 0
+                    }, {
+                        "choice": "Python",
+                        "url": "/questions/2/choices/2",
+                        "votes": 0
+                    }, {
+                        "choice": "Objective-C",
+                        "url": "/questions/2/choices/3",
+                        "votes": 0
+                    }, {
+                        "choice": "Ruby",
+                        "url": "/questions/2/choices/4",
+                        "votes": 0
+                    }
+                ],
+                "creator_email": "test@example.com"
+            }
