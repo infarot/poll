@@ -3,7 +3,7 @@ class ApiController < ActionController::Base
   respond_to :json
 
   def index
-  render json: " questions_url: /questions,\n users_url: /users,\n sessions_url /sessions"
+    render json: "questions_url: /questions,\n users_url: /users,\n sessions_url /sessions"
   end
 
 

@@ -1,28 +1,23 @@
 class QuestionsController < ApplicationController
   before_action :authenticate_user!
   def index
-    @questions = Question.all
-
-    render json: @questions, :status => 200, :content_type => 'application/json'
-
+    questions = Question.all
+    render json: questions, each_serializer: QuestionSerializer
   end
 
   def create
-    @question = Question.create(:question => params[:question], :user_id => current_user.id)
-
-    params[:choices].each do |choice|
-      @choice = Choice.create(:question_id => @question.id , :choice => choice)
+    question = current_user.questions.create(:question => params[:question])
+    choices = params[:choices].split(",").map do |choice|
+      question.choices.create(:choice => choice)
     end
-      render json: {:question => @question, :choices => @question.choices}, :status => 201, :content_type => 'application/json'
+    render json: QuestionSerializer.new(question)
   end
 
-
-
-    def show
-      @question = Question.find(params[:id])
-      render json: {:question => @question, :choices => @question.choices, :creator_email => @question.user.email}, :status => 200, :content_type => 'application/json'
-    end
-
+  def show
+    question = Question.find(params[:id])
+    render json: QuestionSerializer.new(question)
   end
+
+end
 
 
